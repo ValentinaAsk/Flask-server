@@ -11,8 +11,10 @@ class InvalidData:
     data_1 = {'value': 'wrong'}
     data_2 = {'key': 'wrong'}
     data_3 = {'key': 'wrong', 'value': 'wrong', 'NEW': 'new'}
+    data_4 = {}
+    data_5 = ['key', 'value']
 
-
+# @pytest.mark.skip
 class TestPost:
 
     @pytest.fixture(scope='function', autouse=True)
@@ -27,7 +29,6 @@ class TestPost:
         location = self.url
 
         response = requests.post(location, json=request_data)
-        print(response, response.content, response.request.headers)
 
         assert response.status_code == 200
 
@@ -79,3 +80,13 @@ class TestPost:
 
         assert response.status_code == 409
 
+    def test_post_invalid_data_type(self):
+        key = fake.word()
+        value = fake.word()
+        request_data = {'key': key, 'value': value}
+
+        location = self.url
+
+        response = requests.post(location, data=request_data)
+
+        assert response.status_code == 400

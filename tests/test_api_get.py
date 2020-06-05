@@ -1,12 +1,11 @@
 import datetime
 import pytest
 from faker import Faker
-
 import requests
 from app.app import data
 faker = Faker()
 
-
+# @pytest.mark.skip
 class TestGet:
 
     @pytest.fixture(scope='function', autouse=True)
