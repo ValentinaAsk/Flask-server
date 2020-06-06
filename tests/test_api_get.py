@@ -1,36 +1,50 @@
-import datetime
-import pytest
-from faker import Faker
 import requests
-from app.app import data
-faker = Faker()
+
+from tests.base_api import Base
+from app.data import dictionary
+import datetime
+from tests.scheme_and_data_for_tests import *
+
 
 # @pytest.mark.skip
-class TestGet:
+class TestGet(Base):
 
-    @pytest.fixture(scope='function', autouse=True)
-    def setup(self, config):
-        self.url = config
-
-    def test_get_status_code(self):
-        key = 'mail.ru'
+    def test_get_status_code(self, valid_exist_data_with_deletion):
+        key = valid_exist_data_with_deletion["key"]
         location = self.url + f'/{key}'
 
         response = requests.get(location)
 
         assert response.status_code == 200
 
-    def test_get_result(self):
-        key = 'mail.ru'
+    def test_get_nonexistent_key_status_code(self):
+        key = 'nonexistent'
+        location = self.url + f'/{key}'
+
+        response = requests.get(location)
+
+        assert response.status_code == 404
+
+    def test_get_scheme(self, valid_exist_data_with_deletion):
+        key = valid_exist_data_with_deletion["key"]
+        location = self.url + f'/{key}'
+
+        response = requests.get(location, timeout=2)
+        response_data = response.json()
+
+        assert response_scheme.is_valid(response_data)
+
+    def test_get_result(self, valid_exist_data_with_deletion):
+        key = valid_exist_data_with_deletion["key"]
         location = self.url + f'/{key}'
 
         response = requests.get(location)
         response_data = response.json()
 
-        assert response_data['result'] == data['mail.ru']
+        assert response_data['result'] == dictionary[key]
 
-    def test_get_time(self):
-        key = 'mail.ru'
+    def test_get_time(self, valid_exist_data_with_deletion ):
+        key = valid_exist_data_with_deletion["key"]
         location = self.url + f'/{key}'
 
         response = requests.get(location)
@@ -41,11 +55,5 @@ class TestGet:
 
         assert response_data['time'] == time
 
-    def test_get_invalid(self):
-        key = 'wrong'
-        location = self.url + f'/{key}'
 
-        response = requests.get(location)
-
-        assert response.status_code == 404
 

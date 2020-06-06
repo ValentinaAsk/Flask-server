@@ -1,40 +1,23 @@
 import datetime
-from time import sleep
 import pytest
-from faker import Faker
 import requests
-from app.app import data
-fake = Faker()
+from app.data import dictionary
+from tests.base_api import Base
+from tests.scheme_and_data_for_tests import *
 
 
-class InvalidData:
-    data_1 = {'value': 'wrong'}
-    data_2 = {'key': 'wrong'}
-    data_3 = {'key': 'wrong', 'value': 'wrong', 'NEW': 'new'}
-    data_4 = {}
-    data_5 = ['key', 'value']
+@pytest.mark.skip
+class TestPost(Base):
 
-# @pytest.mark.skip
-class TestPost:
-
-    @pytest.fixture(scope='function', autouse=True)
-    def setup(self, config):
-        self.url = config
-
-    def test_post_status_code(self):
-        key = fake.word()
-        value = fake.word()
-        request_data = {'key': key, 'value': value}
-
+    def test_post_status_code(self, valid_data_with_deletion):
+        request_data = valid_data_with_deletion
         location = self.url
 
         response = requests.post(location, json=request_data)
 
         assert response.status_code == 200
 
-    @pytest.mark.parametrize('request_data', [InvalidData.data_1,
-                                              InvalidData.data_2,
-                                              InvalidData.data_3])
+    @pytest.mark.parametrize('request_data', InvalidDataClass.InvalidData)
     def test_post_invalid_data_status_code(self, request_data):
         location = self.url
 
@@ -42,27 +25,29 @@ class TestPost:
 
         assert response.status_code == 400
 
-    def test_post(self):
-        key = fake.word()
-        value = fake.word()
-        request_data = {'key': key, 'value': value}
+    def test_post(self, valid_data_with_deletion):
+        request_data = valid_data_with_deletion
+        location = self.url
 
+        requests.post(location, json=request_data)
+
+        assert dictionary[request_data['key']] == request_data['value']
+
+    def test_post_result(self, valid_data_with_deletion):
+        request_data = valid_data_with_deletion
         location = self.url
 
         response = requests.post(location, json=request_data)
         response_data = response.json()
 
-        assert data[key] == value == response_data["result"]
+        assert response_data['result'] == request_data['value']
+        assert dictionary[request_data['key']] == response_data['result']
 
-    def test_post_time(self):
-        key = fake.word()
-        value = fake.word()
-        request_data = {'key': key, 'value': value}
-
+    def test_post_time(self, valid_data_with_deletion):
+        request_data = valid_data_with_deletion
         location = self.url
 
         response = requests.post(location, json=request_data)
-
         response_data = response.json()
 
         time_now = datetime.datetime.now(tz=None)
@@ -70,23 +55,37 @@ class TestPost:
 
         assert response_data['time'] == time
 
-    def test_post_exist_key(self):
-        key = 'mail.ru'
-        value = 'new'
-        request_data = {'key': key, 'value': value}
-
+    def test_post_exist_key(self, valid_exist_data_without_deletion):
+        request_data = valid_exist_data_without_deletion
         location = self.url
+
         response = requests.post(location, json=request_data)
 
         assert response.status_code == 409
 
-    def test_post_invalid_data_type(self):
-        key = fake.word()
-        value = fake.word()
-        request_data = {'key': key, 'value': value}
-
+    def test_post_invalid_data_type(self, valid_data):
+        request_data = valid_data
         location = self.url
 
         response = requests.post(location, data=request_data)
 
         assert response.status_code == 400
+
+    def test_post_scheme(self, valid_data_with_deletion):
+        request_data = valid_data_with_deletion
+        location = self.url
+
+        response = requests.post(location, json=request_data)
+        response_data = response.json()
+
+        assert response_scheme.is_valid(response_data)
+
+    def test_two_post(self, valid_data_with_deletion):
+        request_data = valid_data_with_deletion
+        location = self.url
+
+        requests.post(location, json=request_data)
+
+        response_2 = requests.post(location, json=request_data)
+
+        assert response_2.status_code == 409

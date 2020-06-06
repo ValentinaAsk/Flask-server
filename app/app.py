@@ -1,13 +1,7 @@
 import threading
 from flask import Flask, request, abort, make_response
-from schema import Schema, SchemaError
+from app.data import *
 import datetime
-import time
-data_scheme = Schema({
-    'key': str,
-    'value': str
-})
-
 
 app = Flask(__name__)
 
@@ -30,24 +24,20 @@ def shutdown():
     return ''
 
 
-data = {
-    'mail.ru': 'targer'
-}
-
-
 @app.route('/dictionary/<key>', methods=['GET'])
 def get_dictionary(key: str):
     try:
-        if not data.get(key, False):
+        if not dictionary.get(key, False):
             return make_response("404 error", 404)
-        value = data[key]
+
+        value = dictionary[key]
 
         time_request = datetime.datetime.now(tz=None)
         response = make_response({"result": value, "time": time_request.strftime("%Y-%m-%d %H:%M")})
 
         return response
-    except Exception as e:
-        print(e)
+    except Exception:
+        abort(500)
 
 
 @app.route('/dictionary', methods=['POST'])
@@ -55,23 +45,23 @@ def post_dictionary():
     try:
         request_data = request.get_json()
 
-        if not data_scheme.is_valid(request_data):
+        if not DICT_SCHEME.is_valid(request_data):
             return make_response("400 error", 400)
 
         value = request_data["value"]
         key = request_data["key"]
 
-        if data.get(key, False):
+        if dictionary.get(key, False):
             return make_response("409 error", 409)
 
-        data[key] = value
+        dictionary[key] = value
 
         time_request = datetime.datetime.now(tz=None)
         response = make_response({"result": value, "time": time_request.strftime("%Y-%m-%d %H:%M")})
 
         return response
-    except Exception as e:
-        print(e)
+    except Exception:
+        abort(500)
 
 
 @app.route('/dictionary/<key>', methods=['PUT'])
@@ -79,7 +69,7 @@ def put_dictionary(key: str):
     try:
         request_data = request.get_json()
 
-        if not data_scheme.is_valid(request_data):
+        if not DICT_SCHEME.is_valid(request_data):
             return make_response("400 error", 400)
 
         value = request_data["value"]
@@ -88,29 +78,30 @@ def put_dictionary(key: str):
         if key != request_key:
             return make_response("invalid data", 404)
 
-        if not data.get(key, False):
+        if not dictionary.get(key, False):
             return make_response("404 error", 404)
 
-        data[key] = value
+        dictionary[key] = value
 
         time_request = datetime.datetime.now(tz=None)
-
         response = make_response({"result": value, "time": time_request.strftime("%Y-%m-%d %H:%M")})
+
         return response
-    except Exception as e:
-        print(e)
+    except Exception:
+        abort(500)
 
 
 @app.route('/dictionary/<key>', methods=['DELETE'])
 def delete_dictionary(key: str):
     try:
-        value = data.get(key, None)
+        if dictionary.get(key, False):
+            dictionary.pop(key)
+
         time_request = datetime.datetime.now(tz=None)
-        response = make_response({"result": value, "time": time_request.strftime("%Y-%m-%d %H:%M")})
+        response = make_response({"result": None, "time": time_request.strftime("%Y-%m-%d %H:%M")})
+
         return response
-    except Exception as e:
-        print(e)
+    except Exception:
+        abort(500)
 
 
-if __name__ == '__main__':
-    run()
