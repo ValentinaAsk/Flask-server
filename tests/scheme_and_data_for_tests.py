@@ -12,7 +12,7 @@ class InvalidDataClass:
     InvalidData = [data_1, data_2, data_3, data_4, data_5]
 
 
-response_scheme = Schema({
+RESPONSE_SCHEMA = Schema({
     'result': Or(str, None),
     'time': str
 })

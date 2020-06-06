@@ -5,6 +5,7 @@ fake = Faker()
 from app import app
 from app.data import dictionary
 
+
 @pytest.fixture(scope='session')
 def config():
     server = app.run()

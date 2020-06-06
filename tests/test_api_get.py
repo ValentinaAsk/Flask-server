@@ -1,9 +1,8 @@
 import requests
-
 from tests.base_api import Base
 from app.data import dictionary
 import datetime
-from tests.scheme_and_data_for_tests import *
+from tests.scheme_and_data_for_tests import RESPONSE_SCHEMA, InvalidDataClass
 
 
 class TestGet(Base):
@@ -40,10 +39,10 @@ class TestGet(Base):
         key = valid_exist_data_with_deletion["key"]
         location = self.url + f'/{key}'
 
-        response = requests.get(location, timeout=2)
+        response = requests.get(location)
         response_data = response.json()
 
-        assert response_scheme.is_valid(response_data)
+        assert RESPONSE_SCHEMA.is_valid(response_data)
 
     def test_get_result(self, valid_exist_data_with_deletion):
         """
@@ -58,10 +57,10 @@ class TestGet(Base):
 
         assert response_data['result'] == dictionary[key]
 
-    def test_get_time(self, valid_exist_data_with_deletion ):
+    def test_get_time(self, valid_exist_data_with_deletion):
         """
         Проверка данных ответа при запросе методом GET.
-        Ожидаемый результат - поле ответа 'time' возвращает время запроса
+        Ожидаемый результат - поле ответа 'time' возвращает время ответа
         """
         key = valid_exist_data_with_deletion["key"]
         location = self.url + f'/{key}'

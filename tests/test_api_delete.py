@@ -3,7 +3,7 @@ import pytest
 import requests
 from tests.base_api import Base
 from app.data import dictionary
-from tests.scheme_and_data_for_tests import *
+from tests.scheme_and_data_for_tests import RESPONSE_SCHEMA, fake
 
 
 class TestDelete(Base):
@@ -60,7 +60,7 @@ class TestDelete(Base):
     def test_delete_time(self, valid_exist_data_without_deletion):
         """
         Проверка данных ответа при запросе методом DELETE.
-        Ожидаемый результат - поле ответа 'time' возвращает веря запроса
+        Ожидаемый результат - поле ответа 'time' возвращает время ответа
         """
         key = valid_exist_data_without_deletion["key"]
         location = self.url + f'/{key}'
@@ -84,4 +84,4 @@ class TestDelete(Base):
         response = requests.delete(location)
         response_data = response.json()
 
-        assert response_scheme.is_valid(response_data)
+        assert RESPONSE_SCHEMA.is_valid(response_data)

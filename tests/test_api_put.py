@@ -3,7 +3,7 @@ import pytest
 import requests
 from app.data import dictionary
 from tests.base_api import Base
-from tests.scheme_and_data_for_tests import *
+from tests.scheme_and_data_for_tests import RESPONSE_SCHEMA, InvalidDataClass, fake
 
 
 class TestPut(Base):
@@ -55,7 +55,7 @@ class TestPut(Base):
     def test_put_time(self,  valid_exist_data_with_deletion_for_put):
         """
         Проверка данных ответа при запросе методом PUT.
-        Ожидаемый результат - поле ответа 'time' возвращает время запроса
+        Ожидаемый результат - поле ответа 'time' возвращает время ответа
         """
 
         request_data = valid_exist_data_with_deletion_for_put
@@ -140,3 +140,17 @@ class TestPut(Base):
         request_2 = requests.put(location, json=request_data)
 
         assert request_2.status_code == 200
+
+    def test_put_scheme(self, valid_exist_data_with_deletion_for_put):
+        """
+        Проверка формата ответа сервера при запросе методом PUT.
+        Ожидаемый формат {'result': str, 'time': str}
+        """
+        request_data = valid_exist_data_with_deletion_for_put
+        key = request_data['key']
+        location = self.url + f'/{key}'
+
+        response = requests.put(location, json=request_data)
+        response_data = response.json()
+
+        assert RESPONSE_SCHEMA.is_valid(response_data)

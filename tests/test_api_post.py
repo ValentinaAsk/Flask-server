@@ -3,7 +3,7 @@ import pytest
 import requests
 from app.data import dictionary
 from tests.base_api import Base
-from tests.scheme_and_data_for_tests import *
+from tests.scheme_and_data_for_tests import RESPONSE_SCHEMA, InvalidDataClass
 
 
 class TestPost(Base):
@@ -61,7 +61,7 @@ class TestPost(Base):
     def test_post_time(self, valid_data_with_deletion):
         """
         Проверка данных ответа при запросе методом POST.
-        Ожидаемый результат - поле ответа 'time' возвращает время запроса
+        Ожидаемый результат - поле ответа 'time' возвращает время ответа
         """
         request_data = valid_data_with_deletion
         location = self.url
@@ -109,7 +109,7 @@ class TestPost(Base):
         response = requests.post(location, json=request_data)
         response_data = response.json()
 
-        assert response_scheme.is_valid(response_data)
+        assert RESPONSE_SCHEMA.is_valid(response_data)
 
     def test_two_post(self, valid_data_with_deletion):
         """
