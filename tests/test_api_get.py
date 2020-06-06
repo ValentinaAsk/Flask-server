@@ -1,3 +1,4 @@
+import pytest
 import requests
 from tests.base_api import Base
 from app.data import dictionary

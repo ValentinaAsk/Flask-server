@@ -1,0 +1,1 @@
+[32mINFO    [0m werkzeug:_internal.py:113 127.0.0.1 - - [06/Jun/2020 15:40:58] "[31m[1mPOST /dictionary HTTP/1.1[0m" 400 -

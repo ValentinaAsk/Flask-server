@@ -1,2 +1,0 @@
-[32mINFO    [0m werkzeug:_internal.py:113 127.0.0.1 - - [06/Jun/2020 14:07:54] "[37mPUT /dictionary/term HTTP/1.1[0m" 200 -
-[32mINFO    [0m werkzeug:_internal.py:113 127.0.0.1 - - [06/Jun/2020 14:07:54] "[37mGET /shutdown HTTP/1.1[0m" 200 -

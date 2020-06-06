@@ -89,7 +89,7 @@ class TestPut(Base):
     def test_put_exist_key_status_code(self, valid_exist_data_with_deletion_for_put):
         """
         Проверка статуса ответа метода PUT при запросе к существющему ключу.
-        Ожидаемый результат 202
+        Ожидаемый результат 200
         """
         request_data = valid_exist_data_with_deletion_for_put
         key = request_data['key']

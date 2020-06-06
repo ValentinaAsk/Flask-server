@@ -74,12 +74,12 @@ class TestPost(Base):
 
         assert response_data['time'] == time
 
-    def test_post_exist_key(self, valid_exist_data_without_deletion):
+    def test_post_exist_key(self, valid_exist_data_with_deletion):
         """
         Проверка статуса ответа метода POST при запросе с существующем ключом.
         Ожидаемый результат 409
         """
-        request_data = valid_exist_data_without_deletion
+        request_data = valid_exist_data_with_deletion
         location = self.url
 
         response = requests.post(location, json=request_data)
