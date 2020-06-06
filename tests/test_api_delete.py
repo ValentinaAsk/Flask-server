@@ -6,10 +6,13 @@ from app.data import dictionary
 from tests.scheme_and_data_for_tests import *
 
 
-@pytest.mark.skip
 class TestDelete(Base):
 
     def test_delete_status_code(self, valid_exist_data_without_deletion):
+        """
+        Проверка статуса ответа метода DELETE при запросе к существющему ключу.
+        Ожидаемый результат 200
+        """
         key = valid_exist_data_without_deletion["key"]
         location = self.url + f'/{key}'
 
@@ -18,6 +21,10 @@ class TestDelete(Base):
         assert response.status_code == 200
 
     def test_delete_data(self, valid_exist_data_without_deletion):
+        """
+        Проверка удаления данных в словаре методом DELETE
+        Ожидаемый результат ключ и значения удалены
+        """
         key = valid_exist_data_without_deletion["key"]
         location = self.url + f'/{key}'
 
@@ -25,7 +32,11 @@ class TestDelete(Base):
 
         assert dictionary.get(key) is None
 
-    def test_delete_nonexistant_key_data(self):
+    def test_delete_nonexistent_key_data_status_code(self):
+        """
+        Проверка статуса ответа метода DELETE при запросе к несуществющему ключу.
+        Ожидаемый результат 200
+        """
         key = fake.word()
         location = self.url + f'/{key}'
 
@@ -34,6 +45,10 @@ class TestDelete(Base):
         assert response.status_code == 200
 
     def test_delete_result(self, valid_exist_data_without_deletion):
+        """
+        Проверка данных ответа при запросе методом DELETE.
+        Ожидаемый результат - поле ответа 'result' возвращает None
+        """
         key = valid_exist_data_without_deletion["key"]
         location = self.url + f'/{key}'
 
@@ -43,6 +58,10 @@ class TestDelete(Base):
         assert response_data['result'] is None
 
     def test_delete_time(self, valid_exist_data_without_deletion):
+        """
+        Проверка данных ответа при запросе методом DELETE.
+        Ожидаемый результат - поле ответа 'time' возвращает веря запроса
+        """
         key = valid_exist_data_without_deletion["key"]
         location = self.url + f'/{key}'
 
@@ -55,6 +74,10 @@ class TestDelete(Base):
         assert response_data['time'] == time
 
     def test_delete_scheme(self, valid_exist_data_without_deletion):
+        """
+        Проверка удаления данных в словаре методом DELETE
+        Ожидаемый результат ключ и значения удалены
+        """
         key = valid_exist_data_without_deletion["key"]
         location = self.url + f'/{key}'
 

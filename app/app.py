@@ -3,12 +3,14 @@ from flask import Flask, request, abort, make_response
 from app.data import *
 import datetime
 
+
 app = Flask(__name__)
 
 
 def run():
     server = threading.Thread(target=app.run, kwargs={'host': '127.0.0.1', 'port': 5000})
     server.start()
+
     return server
 
 
@@ -28,7 +30,7 @@ def shutdown():
 def get_dictionary(key: str):
     try:
         if not dictionary.get(key, False):
-            return make_response("404 error", 404)
+            return make_response(f"There isn`t {key} in the dictionary so server can`t find value", 404)
 
         value = dictionary[key]
 
@@ -46,13 +48,13 @@ def post_dictionary():
         request_data = request.get_json()
 
         if not DICT_SCHEME.is_valid(request_data):
-            return make_response("400 error", 400)
+            return make_response(f"Data {request_data} is invalid so server can`t insert data with the wrong structure", 400)
 
         value = request_data["value"]
         key = request_data["key"]
 
         if dictionary.get(key, False):
-            return make_response("409 error", 409)
+            return make_response(f"There is same {key} in the dictionary so server can`t allow two same keys", 409)
 
         dictionary[key] = value
 
@@ -70,16 +72,16 @@ def put_dictionary(key: str):
         request_data = request.get_json()
 
         if not DICT_SCHEME.is_valid(request_data):
-            return make_response("400 error", 400)
+            return make_response(f"Data {request_data} is invalid so server can`t insert data with the wrong structure", 400)
 
         value = request_data["value"]
         request_key = request_data["key"]
 
         if key != request_key:
-            return make_response("invalid data", 404)
+            return make_response(f"Url key {key} and request key {request_key} are different", 404)
 
         if not dictionary.get(key, False):
-            return make_response("404 error", 404)
+            return make_response(f"There isn`t {key} in the dictionary so server can`t find value", 404)
 
         dictionary[key] = value
 
